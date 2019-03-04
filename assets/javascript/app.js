@@ -1,22 +1,15 @@
 $(document).ready(function() {
-
   // Creating an array of strings
-  var topics = [
-    "Candy",
-    "Pizza Love",
-    "Bacon",
-    "Taco Life",
-    "Cheese",
-    "Donuts Forever",
-    "Cosmic Cheeseburger",
-    "Pasta",
-    "Sprinkles",
-    "Mochi"
-  ];
+  var topics = ["Candy", "Pizza", "Bacon", "Cheeseburger", "Tacos"];
+
+  //   A globally defined variable to change the number of gifs appended to the page
+  var limit = 10;
 
   // Declaring the queryURL variable gloablly
   var queryURL = " ";
 
+  //   A globally defined variable for what we're searching
+  var giFname = " ";
   // Function that appends the topics to the nav bar
   function appendTopics() {
     // Loop through the topics
@@ -35,12 +28,9 @@ $(document).ready(function() {
   // When a topic button with the class "generate" fun this function
   $(".topics").on("click", ".generate", function() {
     // Creates a variable that equals the text clicked on
-    var generateThis = $(this).text();
-    // Updates the global queryURL with the api key, limit and the topic the user chose.
-    queryURL =
-      "https://api.giphy.com/v1/gifs/search?q=" +
-      generateThis +
-      "&api_key=63GUdnqAEjBUWuwXWqlWEQ3lPp2nMkoO&limit=10";
+    giFname = $(this).text();
+    // Resets the limit to 10
+    limit = 10;
     // Removes any gifs already on the page.
     $("#gifs").empty();
     // Calls the giphyCall function after updating the global "queryURL" variable
@@ -48,24 +38,33 @@ $(document).ready(function() {
   });
 
   //   Function that interacts with the search form
-    $(".form-inline").submit(function() {
-      // Prevents the page from reloading when the submit button is pressed
-      event.preventDefault();
-      //   Creates a variable that equals the form-control value
-      var name = $(".form-control").val();
-      // Updates the global queryURL with the api key, limit and the text the user inputed.
-      queryURL =
-        "https://api.giphy.com/v1/gifs/search?q=" +
-        name +
-        "&api_key=63GUdnqAEjBUWuwXWqlWEQ3lPp2nMkoO&limit=10";
-      // Removes any gifs already on the page.
-      $("#gifs").empty();
-      // Calls the giphyCall function after updating the global "queryURL" variable
-      giphyCall();
-    });
+  $(".form-inline").submit(function() {
+    // Prevents the page from reloading when the submit button is pressed
+    event.preventDefault();
+    // Resets the limit to 10
+    limit = 10;
+    //   Creates a variable that equals the form-control value
+    giFname = $(".form-control").val().trim();
+    if (giFname !== "") {
+
+        console.log("the limit in the function is " + limit);
+        // Removes any gifs already on the page.
+        $("#gifs").empty();
+        // Calls the giphyCall function after updating the global "queryURL" variable
+        giphyCall();
+    } else if (giFname === "") {
+        alert("Please pick a junkfood to search!")
+    }
+  });
 
   //   Function to call the API.
   function giphyCall() {
+    queryURL =
+      "https://api.giphy.com/v1/gifs/search?q=" +
+      giFname +
+      "&api_key=63GUdnqAEjBUWuwXWqlWEQ3lPp2nMkoO&" +
+      "limit=" +
+      limit;
     // AJAX Call
     $.ajax({
       // The url is equal to the gloabl variable queryURL. The "GET" method is doing just that.
@@ -77,19 +76,29 @@ $(document).ready(function() {
         // Creating a variable to hold the data from the API
         var giphyData = response.data;
         // Lopp through the giphyData
+        console.log(giphyData);
         for (var i = 0; i < giphyData.length; i++) {
           // Creates an empty div
           var emptyDiv = $("<div>");
-        //   Adds a bootstrap
-          emptyDiv.addClass("col-md-4")
+          //   Adds a bootstrap class to the empty Div
+          emptyDiv.addClass("col-md-4");
+          // Creates a header element to display the gifpy title
+          var giphyTitle = $("<h3 class='title'>").text(giphyData[i].title);
           // Creates a header element to display the gifpy rating
-          var giphyRating = $("<h3 class='rating'>").text("Rating: " + giphyData[i].rating);
+          var rating = giphyData[i].rating
+          var ratingUpperCase = rating.toUpperCase();
+          var giphyRating = $("<p class='rating'>").text(
+            "Rating: " + ratingUpperCase
+          );
           // Createss an image element
           var emptyImage = $("<img>");
           //Adds an attribute to the image to append
           emptyImage.attr("src", giphyData[i].images.fixed_width_still.url);
           //  Adds a data attribute for when the data is resting
-          emptyImage.attr("data-rest", giphyData[i].images.fixed_width_still.url);
+          emptyImage.attr(
+            "data-rest",
+            giphyData[i].images.fixed_width_still.url
+          );
           //  Adds a data attribute for when the data is in use
           emptyImage.attr("data-use", giphyData[i].images.fixed_width.url);
           //  Initilize the data in "rest" state
@@ -98,7 +107,9 @@ $(document).ready(function() {
           emptyImage.addClass("clicker");
           //  Appends the image to the emptyDiv
           emptyDiv.append(emptyImage);
-          //   Appends the Rating below the Image
+          //   Appends the Title below the Image
+          emptyDiv.append(giphyTitle);
+          //   Appends the Rating below the Title
           emptyDiv.append(giphyRating);
           // Appends the images to the page dynamically
           $(".row").append(emptyDiv);
@@ -125,6 +136,15 @@ $(document).ready(function() {
     }
   });
 
+  //   When the junk id is clicked on
+  $("#junk").on("click", function() {
+    // Increse the global variable by 10
+    limit = limit += 10;
+    // Clear the gifs on the screen
+    $("#gifs").empty();
+    // reload the gifs with an updated limit
+    giphyCall();
+  });
   // Calls the appendTopics function to append the topics to the navBar when the page loads
   appendTopics();
 });
