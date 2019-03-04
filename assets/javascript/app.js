@@ -36,7 +36,7 @@ $(document).ready(function() {
     var generateThis = $(this).text();
     // Updates the global queryURL with the api key, limit and the topic the user chose.
     queryURL =
-      "http://api.giphy.com/v1/gifs/search?q=" +
+      "https://api.giphy.com/v1/gifs/search?q=" +
       generateThis +
       "&api_key=63GUdnqAEjBUWuwXWqlWEQ3lPp2nMkoO&limit=10";
     // Removes any gifs already on the page.
@@ -54,7 +54,7 @@ $(document).ready(function() {
       var name = $(".form-control").val();
       // Updates the global queryURL with the api key, limit and the text the user inputed.
       queryURL =
-        "http://api.giphy.com/v1/gifs/search?q=" +
+        "https://api.giphy.com/v1/gifs/search?q=" +
         name +
         "&api_key=63GUdnqAEjBUWuwXWqlWEQ3lPp2nMkoO&limit=10";
       // Removes any gifs already on the page.
