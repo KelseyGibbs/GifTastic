@@ -1,17 +1,19 @@
 $(document).ready(function() {
+
   // Creating an array of strings
   var topics = [
-    "pizza",
-    "tacos",
-    "donuts",
-    "cheeseburger",
-    "bacon",
-    "candy",
-    "cheese",
-    "cake",
-    "pasta",
-    "mochi"
+    "Candy",
+    "Pizza Love",
+    "Bacon",
+    "Taco Life",
+    "Cheese",
+    "Donuts Forever",
+    "Cosmic Cheeseburger",
+    "Pasta",
+    "Sprinkles",
+    "Mochi"
   ];
+
   // Declaring the queryURL variable gloablly
   var queryURL = " ";
 
@@ -46,11 +48,10 @@ $(document).ready(function() {
   });
 
   //   Function that interacts with the search form
-  $(function() {
     $(".form-inline").submit(function() {
       // Prevents the page from reloading when the submit button is pressed
       event.preventDefault();
-      //   Creates a variable that equals the user input
+      //   Creates a variable that equals the form-control value
       var name = $(".form-control").val();
       // Updates the global queryURL with the api key, limit and the text the user inputed.
       queryURL =
@@ -62,7 +63,6 @@ $(document).ready(function() {
       // Calls the giphyCall function after updating the global "queryURL" variable
       giphyCall();
     });
-  });
 
   //   Function to call the API.
   function giphyCall() {
@@ -76,25 +76,55 @@ $(document).ready(function() {
       .then(function(response) {
         // Creating a variable to hold the data from the API
         var giphyData = response.data;
-        console.log(giphyData);
         // Lopp through the giphyData
         for (var i = 0; i < giphyData.length; i++) {
+          // Creates an empty div
           var emptyDiv = $("<div>");
-          var giphyRating = $("<h3 class='rating'>").text(
-            "Rating: " + giphyData[i].rating
-          );
-
+        //   Adds a bootstrap
+          emptyDiv.addClass("col-md-4")
+          // Creates a header element to display the gifpy rating
+          var giphyRating = $("<h3 class='rating'>").text("Rating: " + giphyData[i].rating);
+          // Createss an image element
           var emptyImage = $("<img>");
-
-          emptyImage.attr("src", giphyData[i].images.preview_gif.url);
-
+          //Adds an attribute to the image to append
+          emptyImage.attr("src", giphyData[i].images.fixed_width_still.url);
+          //  Adds a data attribute for when the data is resting
+          emptyImage.attr("data-rest", giphyData[i].images.fixed_width_still.url);
+          //  Adds a data attribute for when the data is in use
+          emptyImage.attr("data-use", giphyData[i].images.fixed_width.url);
+          //  Initilize the data in "rest" state
+          emptyImage.attr("data-state", "rest");
+          //   Adds a class to the images to use with an on click function
+          emptyImage.addClass("clicker");
+          //  Appends the image to the emptyDiv
           emptyDiv.append(emptyImage);
+          //   Appends the Rating below the Image
           emptyDiv.append(giphyRating);
-
-          $("#gifs").append(emptyDiv);
+          // Appends the images to the page dynamically
+          $(".row").append(emptyDiv);
         }
       });
   }
+
+  //   When a gif is clicken on
+  $("#gifs").on("click", ".clicker", function() {
+    //   Create a variable equal to the current data-state
+    var currentState = $(this).attr("data-state");
+    // If the cureent state is rest
+    if (currentState === "rest") {
+      // Change the src attribute to the "data-use" attribute
+      $(this).attr("src", $(this).attr("data-use"));
+      // Change the data-state to "use"
+      $(this).attr("data-state", "use");
+      //   If the current data-state is not rest
+    } else {
+      // Change the src attribute to the "data-rest" attribute
+      $(this).attr("src", $(this).attr("data-rest"));
+      // Change the data-state back to "rest"
+      $(this).attr("data-state", "rest");
+    }
+  });
+
   // Calls the appendTopics function to append the topics to the navBar when the page loads
   appendTopics();
 });
