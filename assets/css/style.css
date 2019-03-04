@@ -7,7 +7,10 @@ body {
 }
 
 button {
-    margin: .08in;
+    margin: .01in;
     background-color: #C6D8D3;
 }
 
+.container {
+    padding-top: .2in;
+}

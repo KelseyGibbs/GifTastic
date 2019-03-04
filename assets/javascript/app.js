@@ -1,6 +1,6 @@
 $(document).ready(function() {
   // Creating an array of strings
-  var topics = ["Candy", "Pizza", "Bacon", "Cheeseburger", "Tacos"];
+  var topics = ["Candy", "Pizza", "Cake", "Cheeseburger", "Tacos"];
 
   //   A globally defined variable to change the number of gifs appended to the page
   var limit = 10;
@@ -11,6 +11,7 @@ $(document).ready(function() {
   //   A globally defined variable for what we're searching
   var giFname = " ";
   // Function that appends the topics to the nav bar
+  var faveThis = " ";
   function appendTopics() {
     // Loop through the topics
     for (i = 0; i < topics.length; i++) {
@@ -44,16 +45,17 @@ $(document).ready(function() {
     // Resets the limit to 10
     limit = 10;
     //   Creates a variable that equals the form-control value
-    giFname = $(".form-control").val().trim();
+    giFname = $(".form-control")
+      .val()
+      .trim();
     if (giFname !== "") {
-
-        console.log("the limit in the function is " + limit);
-        // Removes any gifs already on the page.
-        $("#gifs").empty();
-        // Calls the giphyCall function after updating the global "queryURL" variable
-        giphyCall();
+      console.log("the limit in the function is " + limit);
+      // Removes any gifs already on the page.
+      $("#gifs").empty();
+      // Calls the giphyCall function after updating the global "queryURL" variable
+      giphyCall();
     } else if (giFname === "") {
-        alert("Please pick a junkfood to search!")
+      alert("Please pick a junkfood to search!");
     }
   });
 
@@ -76,22 +78,24 @@ $(document).ready(function() {
         // Creating a variable to hold the data from the API
         var giphyData = response.data;
         // Lopp through the giphyData
-        console.log(giphyData);
         for (var i = 0; i < giphyData.length; i++) {
           // Creates an empty div
-          var emptyDiv = $("<div>");
-          //   Adds a bootstrap class to the empty Div
-          emptyDiv.addClass("col-md-4");
+          var emptyDiv = $("<div class='faves'>");
           // Creates a header element to display the gifpy title
           var giphyTitle = $("<h3 class='title'>").text(giphyData[i].title);
           // Creates a header element to display the gifpy rating
-          var rating = giphyData[i].rating
+          var rating = giphyData[i].rating;
           var ratingUpperCase = rating.toUpperCase();
           var giphyRating = $("<p class='rating'>").text(
             "Rating: " + ratingUpperCase
           );
           // Createss an image element
           var emptyImage = $("<img>");
+          //   Adds a bootstrap class to the empty Div
+        //   var emptyButton = $("<button class='fave'>").text("Fave <3");
+          //   emptyButton.addClass("faves");
+        //   emptyButton.attr("src", giphyData[i].images.fixed_width.url);
+          emptyDiv.addClass("col-md-4");
           //Adds an attribute to the image to append
           emptyImage.attr("src", giphyData[i].images.fixed_width_still.url);
           //  Adds a data attribute for when the data is resting
@@ -111,6 +115,7 @@ $(document).ready(function() {
           emptyDiv.append(giphyTitle);
           //   Appends the Rating below the Title
           emptyDiv.append(giphyRating);
+        //   emptyDiv.append(emptyButton);
           // Appends the images to the page dynamically
           $(".row").append(emptyDiv);
         }
@@ -121,6 +126,7 @@ $(document).ready(function() {
   $("#gifs").on("click", ".clicker", function() {
     //   Create a variable equal to the current data-state
     var currentState = $(this).attr("data-state");
+    console.log(currentState);
     // If the cureent state is rest
     if (currentState === "rest") {
       // Change the src attribute to the "data-use" attribute
@@ -145,6 +151,19 @@ $(document).ready(function() {
     // reload the gifs with an updated limit
     giphyCall();
   });
+
+//   $("#favesDisplay").on("click", function() {
+//     localStorage.getItem("URLS");
+//   });
+//   var favesArray = " ";
+//   $("#gifs").on("click", ".faves", function() {
+//     faveThis = $(this);
+//     console.log(faveThis);
+//     favesArray = favesArray + faveThis;
+//     localStorage.setItem("URLS", JSON.stringify(favesArray));
+//     console.log(favesArray);
+//     // localStorage.setItem("URL", faveThis);
+//   });
   // Calls the appendTopics function to append the topics to the navBar when the page loads
   appendTopics();
 });
