@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  
   // Creating an array of strings
   var topics = ["Candy", "Pizza", "Cake", "Cheeseburger", "Tacos"];
 
